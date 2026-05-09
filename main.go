@@ -6,17 +6,22 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
+const (
+	MsgHealthy = "Server is healthy"
+)
+
 func main() {
 	router := gin.Default()
 
 	router.GET("/health", func(context *gin.Context) {
 		context.JSON(http.StatusOK, gin.H{
-			"status":  "Ok",
-			"message": "Server is healthy",
+			"status":  http.StatusText(http.StatusOK),
+			"message": MsgHealthy,
 		})
 	})
 
 	registerDashboardRoutes(router)
+	registerDashboardRoutesInParallel(router)
 
 	router.Run(":8080")
 }
