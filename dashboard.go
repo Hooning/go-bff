@@ -1,6 +1,7 @@
 package main
 
 import (
+	"log"
 	"net/http"
 	"sync"
 
@@ -74,19 +75,22 @@ func registerDashboardRoutesInParallel(router *gin.Engine) {
 		response := gin.H{}
 
 		if userResult.err != nil {
-			response["user_error"] = userResult.err.Error()
+			log.Printf("[ERROR] user service failed: %v", userResult.err)
+			response["user"] = nil
 		} else {
 			response["user"] = userResult.data
 		}
 
 		if metricsResult.err != nil {
-			response["metrics_error"] = metricsResult.err.Error()
+			log.Printf("[ERROR] metrics service failed: %v", metricsResult.err)
+			response["metrics"] = nil
 		} else {
 			response["metrics"] = metricsResult.data
 		}
 
 		if alertsResult.err != nil {
-			response["alerts_error"] = alertsResult.err.Error()
+			log.Printf("[ERROR] alerts service failed: %v", alertsResult.err)
+			response["alerts"] = nil
 		} else {
 			response["alerts"] = alertsResult.data
 		}
