@@ -13,6 +13,9 @@ const (
 func main() {
 	router := gin.Default()
 
+	router.Use(RequestID())
+	router.Use(RequestLogger())
+
 	router.GET("/health", func(context *gin.Context) {
 		context.JSON(http.StatusOK, gin.H{
 			"status":  http.StatusText(http.StatusOK),

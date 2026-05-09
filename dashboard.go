@@ -29,6 +29,8 @@ func registerDashboardRoutes(router *gin.Engine) {
 
 func registerDashboardRoutesInParallel(router *gin.Engine) {
 	router.GET("/api/dashboard/overview-parallel", func(context *gin.Context) {
+		requestID := context.GetString("request_id")
+
 		var waitGroup sync.WaitGroup
 
 		userChannel := make(chan Result[User], 1)
@@ -75,21 +77,21 @@ func registerDashboardRoutesInParallel(router *gin.Engine) {
 		response := gin.H{}
 
 		if userResult.err != nil {
-			log.Printf("[ERROR] user service failed: %v", userResult.err)
+			log.Printf("[ERROR] (req:%s) user service failed: %v", requestID, userResult.err)
 			response["user"] = nil
 		} else {
 			response["user"] = userResult.data
 		}
 
 		if metricsResult.err != nil {
-			log.Printf("[ERROR] metrics service failed: %v", metricsResult.err)
+			log.Printf("[ERROR] (req:%s) metrics service failed: %v", requestID, metricsResult.err)
 			response["metrics"] = nil
 		} else {
 			response["metrics"] = metricsResult.data
 		}
 
 		if alertsResult.err != nil {
-			log.Printf("[ERROR] alerts service failed: %v", alertsResult.err)
+			log.Printf("[ERROR] (req:%s) alerts service failed: %v", requestID, alertsResult.err)
 			response["alerts"] = nil
 		} else {
 			response["alerts"] = alertsResult.data
